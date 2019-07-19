@@ -50,3 +50,6 @@ Caused by: java.io.EOFException: HttpConnectionOverHTTP@6f56146f::DecryptedEndPo
     at org.eclipse.jetty.util.thread.QueuedThreadPool$Runner.run(QueuedThreadPool.java:917)
     ... 1 more
 ```
+
+
+Be aware, that one should wait long enough. In the most cases it is reproducible within around 5-10 minutes. If it doesn't happen, try to restart again.

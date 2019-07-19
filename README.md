@@ -53,3 +53,10 @@ Caused by: java.io.EOFException: HttpConnectionOverHTTP@6f56146f::DecryptedEndPo
 
 
 Be aware, that one should wait long enough. In the most cases it is reproducible within around 5-10 minutes. If it doesn't happen, try to restart again.
+
+# How to run
+There are 3 options how you can run this project
+
+1. Using `Docker`: `docker build .` from the root directory of the project
+2. Using `maven` only: `mvn clean test` from the root directory of the project
+3. Using your favourite IDE: run the `Bootstrap#main` class directly from your IDE

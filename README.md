@@ -69,7 +69,7 @@ java.io.EOFException: HttpConnectionOverHTTP@43f11127::DecryptedEndPoint@58c1c45
 ```
 
 
-Be aware, that one should wait long enough. In the most cases it is reproducible within around 5-10 minutes. If it doesn't happen, try to restart again.
+Be aware, that one may need to wait long enough. In the most cases it is reproducible within a time frame of 5-10 minutes. If it doesn't happen, try to restart again.
 
 # How to run
 There are 3 options how you can run this project

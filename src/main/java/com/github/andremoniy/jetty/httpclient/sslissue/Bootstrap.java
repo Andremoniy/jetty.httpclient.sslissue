@@ -116,7 +116,8 @@ public class Bootstrap {
 
         sslContextFactory.setKeyStore(KeyStore.getInstance(tempKeystore, "123456".toCharArray()));
         sslContextFactory.setKeyManagerPassword("123456");
-
+        // https://webtide.com/openjdk-11-and-tls-1-3-issues/
+        sslContextFactory.setExcludeProtocols("TLSv1.3");
         sslContextFactory.setEndpointIdentificationAlgorithm("HTTPS");
 
         return new ConnectionFactory[]{

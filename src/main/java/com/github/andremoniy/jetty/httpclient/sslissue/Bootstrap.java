@@ -12,6 +12,8 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.servlet.ServletContainer;
 
@@ -22,16 +24,70 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 public class Bootstrap {
 
-    public static void main(String[] args) throws Exception {
-        final int port = 55556;
+    private final static Logger LOG = Log.getLogger(Bootstrap.class);
+    private static final int SERVER_PORT = 8080;
+    private static final String BASE_URL = "https://localhost:" + SERVER_PORT + "/";
 
+    public static void main(String[] args) throws Exception {
+
+        final Server server = startServer();
+
+        final HttpClient httpClient = new HttpClient(new SslContextFactory.Client(true));
+        httpClient.start();
+
+        final CountDownLatch errorCountDownLatch = new CountDownLatch(1);
+
+        final Runnable get = () -> {
+            do {
+                try {
+                    httpClient.GET(BASE_URL + "get");
+                } catch (Exception e) {
+                    errorCountDownLatch.countDown();
+                    LOG.warn(e.getMessage(), e);
+                    throw new IllegalStateException(e);
+                }
+            } while (true);
+        };
+        final Runnable post = () -> {
+            do {
+                try {
+                    httpClient.POST(BASE_URL + "post").send();
+                } catch (Exception e) {
+                    errorCountDownLatch.countDown();
+                    LOG.warn(e.getMessage(), e);
+                    throw new IllegalStateException(e);
+                }
+            } while (true);
+        };
+
+        final Set<Thread> threadSet = new HashSet<>();
+        final int numberOfThreadsPairs = Runtime.getRuntime().availableProcessors() / 2;
+        LOG.info("Running {} threads", numberOfThreadsPairs * 2);
+        for (int i = 0; i < numberOfThreadsPairs; i++) {
+            final Thread getThread = new Thread(get);
+            getThread.start();
+            threadSet.add(getThread);
+            final Thread postThread = new Thread(post);
+            postThread.start();
+            threadSet.add(postThread);
+        }
+
+        errorCountDownLatch.await();
+        threadSet.forEach(Thread::interrupt);
+        server.stop();
+    }
+
+    private static Server startServer() throws Exception {
         final Server server = new Server();
 
         final ServerConnector serverConnector = new ServerConnector(server, getConnectionFactories());
-        serverConnector.setPort(port);
+        serverConnector.setPort(Bootstrap.SERVER_PORT);
         server.addConnector(serverConnector);
 
         final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -43,38 +99,7 @@ public class Bootstrap {
         server.setHandler(context);
 
         server.start();
-
-        final HttpClient httpClient = new HttpClient(new SslContextFactory.Client(true));
-        httpClient.start();
-
-        final String baseUrl = "https://localhost:" + port + "/";
-
-        final Runnable get = () -> {
-            do {
-                try {
-                    httpClient.GET(baseUrl + "get");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } while (true);
-        };
-        final Runnable post = () -> {
-            do {
-                try {
-                    httpClient.POST(baseUrl + "post").send();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } while (true);
-        };
-
-        for (int i = 0; i < 2; i++) {
-            new Thread(get).start();
-            new Thread(post).start();
-        }
-
-        server.join();
-
+        return server;
     }
 
     private static ConnectionFactory[] getConnectionFactories() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException {

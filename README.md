@@ -77,3 +77,7 @@ There are 3 options how you can run this project
 1. Using `Docker`: `docker build .` from the root directory of the project
 2. Using `maven` only: `mvn clean test` from the root directory of the project
 3. Using your favourite IDE: run the `Bootstrap#main` class directly from your IDE
+
+# Additional info
+
+Originally the error was detected in a multi-server architecture. That is to say that it is not necessary to have both server and client running in the same JVM or on the same machine to reproduce this behaviour.

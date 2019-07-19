@@ -24,7 +24,7 @@ java.util.concurrent.ExecutionException: java.io.EOFException: HttpConnectionOve
 	at org.eclipse.jetty.client.util.FutureResponseListener.getResult(FutureResponseListener.java:118)
 	at org.eclipse.jetty.client.util.FutureResponseListener.get(FutureResponseListener.java:101)
 	at org.eclipse.jetty.client.HttpRequest.send(HttpRequest.java:683)
-	at com.github.andremoniy.jetty.httpclient.sslissue.Bootstrap.lambda$main$1(Bootstrap.java:60)
+	at com.github.andremoniy.jetty.httpclient.sslissue.BootstrapWithJettyServer.lambda$main$1(Bootstrap.java:60)
 	at java.base/java.lang.Thread.run(Thread.java:834)
 Caused by: 
 java.io.EOFException: HttpConnectionOverHTTP@43f11127::DecryptedEndPoint@58c1c452{localhost/127.0.0.1:8080<->/127.0.0.1:50734,OPEN,fill=-,flush=P,to=1/0}
@@ -63,7 +63,7 @@ java.io.EOFException: HttpConnectionOverHTTP@43f11127::DecryptedEndPoint@58c1c45
 	at org.eclipse.jetty.client.HttpClient.send(HttpClient.java:576)
 	at org.eclipse.jetty.client.HttpRequest.send(HttpRequest.java:726)
 	at org.eclipse.jetty.client.HttpRequest.send(HttpRequest.java:679)
-	at com.github.andremoniy.jetty.httpclient.sslissue.Bootstrap.lambda$main$1(Bootstrap.java:60)
+	at com.github.andremoniy.jetty.httpclient.sslissue.BootstrapWithJettyServer.lambda$main$1(Bootstrap.java:60)
 	at java.base/java.lang.Thread.run(Thread.java:834)
 
 ```

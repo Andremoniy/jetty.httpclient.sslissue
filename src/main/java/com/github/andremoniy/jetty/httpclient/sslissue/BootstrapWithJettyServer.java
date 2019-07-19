@@ -28,9 +28,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
-public class Bootstrap {
+public class BootstrapWithJettyServer {
 
-    private final static Logger LOG = Log.getLogger(Bootstrap.class);
+    private final static Logger LOG = Log.getLogger(BootstrapWithJettyServer.class);
     private static final int SERVER_PORT = 8080;
     private static final String BASE_URL = "https://localhost:" + SERVER_PORT + "/";
 
@@ -87,7 +87,7 @@ public class Bootstrap {
         final Server server = new Server();
 
         final ServerConnector serverConnector = new ServerConnector(server, getConnectionFactories());
-        serverConnector.setPort(Bootstrap.SERVER_PORT);
+        serverConnector.setPort(BootstrapWithJettyServer.SERVER_PORT);
         server.addConnector(serverConnector);
 
         final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -109,7 +109,7 @@ public class Bootstrap {
         final SslContextFactory sslContextFactory = new SslContextFactory.Server();
 
         final java.io.File tempKeystore = java.io.File.createTempFile("keystore", "jks");
-        try (InputStream inputStream = Bootstrap.class.getClassLoader().getResourceAsStream("keystore.jks");
+        try (InputStream inputStream = BootstrapWithJettyServer.class.getClassLoader().getResourceAsStream("keystore.jks");
              FileOutputStream fileOutputStream = new FileOutputStream(tempKeystore)) {
             fileOutputStream.write(inputStream.readAllBytes());
         }

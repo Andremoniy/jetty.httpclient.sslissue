@@ -82,6 +82,9 @@
                         <version>5.5.0</version>
                     </dependency>
                 </dependencies>
+                <configuration>
+                    <argLine>-Dorg.eclipse.jetty.LEVEL=DEBUG</argLine>
+                </configuration>
             </plugin>
         </plugins>
     </build>

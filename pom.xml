@@ -82,6 +82,9 @@
                         <version>5.5.0</version>
                     </dependency>
                 </dependencies>
+                <configuration>
+                    <argLine>-Dorg.eclipse.jetty.LEVEL=DEBUG -Xlog:gc*,gc+ref=debug,gc+heap=debug,gc+age=trace:file=gc-%p-%t.log:tags,uptime,time,level:filecount=10,filesize=50m</argLine>
+                </configuration>
             </plugin>
         </plugins>
     </build>

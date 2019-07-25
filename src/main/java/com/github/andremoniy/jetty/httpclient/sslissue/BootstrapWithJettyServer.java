@@ -24,15 +24,14 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 public class BootstrapWithJettyServer {
 
     private final static Logger LOG = Log.getLogger(BootstrapWithJettyServer.class);
-    private static final int SERVER_PORT = 8080;
+    private static final int SERVER_PORT = 50734;
     private static final String BASE_URL = "https://localhost:" + SERVER_PORT + "/";
+    private static final String KEYSTORE_PSWD = "123456";
 
     public static void main(String[] args) throws Exception {
 
@@ -66,20 +65,14 @@ public class BootstrapWithJettyServer {
             } while (true);
         };
 
-        final Set<Thread> threadSet = new HashSet<>();
-        final int numberOfThreadsPairs = Runtime.getRuntime().availableProcessors() / 2;
+        final int numberOfThreadsPairs = Runtime.getRuntime().availableProcessors();
         LOG.info("Running {} threads", numberOfThreadsPairs * 2);
         for (int i = 0; i < numberOfThreadsPairs; i++) {
-            final Thread getThread = new Thread(get);
-            getThread.start();
-            threadSet.add(getThread);
-            final Thread postThread = new Thread(post);
-            postThread.start();
-            threadSet.add(postThread);
+            new Thread(get).start();
+            new Thread(post).start();
         }
 
         errorCountDownLatch.await();
-        threadSet.forEach(Thread::interrupt);
         server.stop();
     }
 
@@ -114,8 +107,8 @@ public class BootstrapWithJettyServer {
             fileOutputStream.write(inputStream.readAllBytes());
         }
 
-        sslContextFactory.setKeyStore(KeyStore.getInstance(tempKeystore, "123456".toCharArray()));
-        sslContextFactory.setKeyManagerPassword("123456");
+        sslContextFactory.setKeyStore(KeyStore.getInstance(tempKeystore,KEYSTORE_PSWD.toCharArray()));
+        sslContextFactory.setKeyManagerPassword(KEYSTORE_PSWD);
         // https://webtide.com/openjdk-11-and-tls-1-3-issues/
         sslContextFactory.setExcludeProtocols("TLSv1.3");
         sslContextFactory.setEndpointIdentificationAlgorithm("HTTPS");
